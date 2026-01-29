@@ -99,7 +99,7 @@ Source:
 
 A UDP-Based Multiplexed and Secure Transport
 
-RFC 9000
+[RFC 9000](https://www.rfc-editor.org/rfc/rfc9000)
 
 ---
 
@@ -138,18 +138,24 @@ QUIC extensions can ...
 
 | | |
 |---|---|
-| Address Discovery | `ietf-quic-address-discovery-00` |
-| NAT Traversal | `seemann-quic-nat-traversal-02`, iroh impl (yet unspecced) |
-| Multipath | `draft-ietf-quic-multipath-19` |
+| Address Discovery | [`ietf-quic-address-discovery-00`][address-discovery] |
+| NAT Traversal | [`seemann-quic-nat-traversal-02`][nat-traversal], iroh impl (yet unspecced) |
+| Multipath | [`draft-ietf-quic-multipath-19`][multipath] |
 | Relaying | MASQUE, QMux, .. |
+
+[address-discovery]: https://datatracker.ietf.org/doc/draft-ietf-quic-address-discovery/
+[nat-traversal]: https://datatracker.ietf.org/doc/draft-seemann-quic-nat-traversal/
+[multipath]: https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/
 
 ---
 
 ## QUIC Address Discovery
 
-`draft-ietf-quic-address-discovery` (early stage, not yet final)
+[`draft-ietf-quic-address-discovery`][address-discovery] (early stage, not yet final)
 
 > An endpoint that negotiated this extension and offered to provide address observations to the peer MUST send an `OBSERVED_ADDRESS` frame on every new path. This also applies to the path used for the QUIC handshake. The OBSERVED_ADDRESS frame SHOULD be sent as early as possible.
+
+[address-discovery]: https://datatracker.ietf.org/doc/draft-ietf-quic-address-discovery/
 
 ---
 
@@ -175,9 +181,11 @@ QUIC extensions can ...
 
 ### Managing multiple paths for a QUIC connection
 
-`draft-ietf-quic-multipath-19` (nearly final)
+[`draft-ietf-quic-multipath-19`][multipath] (nearly final)
 
 > This document specifies a multipath extension for the QUIC protocol to enable the simultaneous usage of multiple paths for a single connection. It proposes a standard way to create, delete, and manage paths using identifiers. It does not specify address discovery or management, nor how applications using QUIC schedule traffic over multiple paths.
+
+[multipath]: https://datatracker.ietf.org/doc/draft-ietf-quic-multipath/
 
 ---
 
@@ -195,7 +203,8 @@ QUIC extensions can ...
 ## NAT Traversal
 
 ### Using QUIC to traverse NATs
-`draft-seemann-quic-nat-traversal-02` (early stage)
+
+[`draft-seemann-quic-nat-traversal-02`][nat-traversal] (early stage)
 
 * Basic premise:
   * Both endpoint send frames with their socket addresses
@@ -205,6 +214,8 @@ QUIC extensions can ...
   * New paths are opened
   
 * Iroh implements a variation (not yet specced)
+
+[nat-traversal]: https://datatracker.ietf.org/doc/draft-seemann-quic-nat-traversal/
 
 ---
 
@@ -226,15 +237,18 @@ QUIC extensions can ...
 
 ### qlog: Structured Logging for Network Protocols
 
-`draft-ietf-quic-qlog-main-schema-13`
+[`draft-ietf-quic-qlog-main-schema-13`][qlog-main]
 
 > qlog provides extensible structured logging for network protocols, allowing for easy sharing of data that benefits common debug and analysis methods and tooling.
 
 ### QUIC event definitions for qlog
 
-` draft-ietf-quic-qlog-quic-events-12`
+[`draft-ietf-quic-qlog-quic-events-12`][qlog-events]
 
 > This document describes a qlog event schema containing concrete qlog event definitions and their metadata for the core QUIC protocol and selected extensions.
+
+[qlog-main]: https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-main-schema/
+[qlog-events]: https://datatracker.ietf.org/doc/draft-ietf-quic-qlog-quic-events/
 
 ---
 
