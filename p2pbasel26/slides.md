@@ -1,8 +1,12 @@
-# State of P2P Networking & QUIC-based approaches
+# State of P2P Networking &<br> QUIC-based approaches
 
 *Franz Heinzmann, n0 computer*
 
 P2P Basel 2026
+
+<small>
+    <a href="https://github.com/Frando/talks/blob/main/p2pbasel26/slides.md">slides @ github</a>
+</small>
 
 ---
 
@@ -31,7 +35,7 @@ P2P Basel 2026
 
 ---
 
-## Packets are not enough: What do we want from a connection?
+## Packets are not enough:<br>What do we want from a connection?
 
 * Connection multiplexing for independent protocols
 * Ordered and reliable streams of data
@@ -83,7 +87,10 @@ P2P Basel 2026
 ![WebRTC Stack](webrtc.png)
 
 <small>
-Source: Martin Meszaros, https://www.researchgate.net/publication/328334940_Definition_and_Analysis_of_WebRTC_Performance_Parameters_as_well_as_Conception_and_Realization_of_an_End-to-End_Audio_Quality_Monitoring_Solution_for_WebRTC-Based_immmr_Call_Scenarios
+Source:
+<a href="https://www.researchgate.net/publication/328334940_Definition_and_Analysis_of_WebRTC_Performance_Parameters_as_well_as_Conception_and_Realization_of_an_End-to-End_Audio_Quality_Monitoring_Solution_for_WebRTC-Based_immmr_Call_Scenarios">
+    Meszaros, Martin & Trojahn, Franziska (2017): Definition and Analysis of WebRTC Performance Parameters as well as Conception and Realization of an End-to-End Audio Quality Monitoring Solution for WebRTC-Based "immmr" Call Scenarios
+</a>
 </small>
 
 ---

@@ -15,18 +15,21 @@
                 --pink: #d53f8c;
             }
 
-            .footer {
-                font-size: 0.7rem;
-                color: #999;
-                margin-top: 2rem;
-                position: absolute;
-                bottom: 8rem;
+            #footer a,
+            small a {
+                color: inherit;
+                text-decoration-style: dashed;
             }
 
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+            }
+
+            small {
+                font-size: 0.7rem;
+                line-height: 1.5em;
             }
 
             body {
@@ -50,7 +53,7 @@
                 display: none;
                 width: 100%;
                 height: 100%;
-                margin-top: 4rem;
+                margin-top: 5rem;
                 max-width: 1000px;
                 padding: 2rem 4rem;
                 animation: fadeIn 0.15s ease;
@@ -131,6 +134,15 @@
                 color: var(--teal);
             }
 
+            li > p:has(+ ul) {
+                margin-bottom: 0;
+            }
+
+            li > ul {
+                font-size: 0.9em;
+                color: #ccc;
+            }
+
             /* Tables */
             table {
                 width: 100%;
@@ -174,6 +186,14 @@
                 transform: translate(-50%, -50%);
                 text-align: center;
                 width: 80%;
+            }
+
+            #footer {
+                font-size: 0.8rem;
+                color: var(--muted);
+                position: fixed;
+                bottom: 1rem;
+                left: 1rem;
             }
 
             /* Progress */
@@ -221,6 +241,14 @@
     </head>
     <body>
         <div id="slides"></div>
+        <div id="footer">
+            Franz Heinzmann | State of P2P Networking & QUIC-based approaches |
+            <a href="https://p2p-basel.org" target="_blank">P2P Basel 26</a> |
+            <a
+                href="https://github.com/Frando/talks/blob/main/p2pbasel26/slides.md"
+                >source</a
+            >
+        </div>
         <div id="progress"></div>
         <div id="counter"></div>
         <div id="help">← → navigate | f fullscreen</div>
@@ -244,9 +272,7 @@
                     slideContents.forEach((content, i) => {
                         const div = document.createElement("div");
                         div.className = "slide" + (i === 0 ? " active" : "");
-                        div.innerHTML =
-                            marked.parse(content) +
-                            `<div class='footer'>${i}/${slideContents.length} | Franz Heinzmann | State of P2P Networking & QUIC-based approaches | P2P Basel 26</div>`;
+                        div.innerHTML = marked.parse(content);
                         container.appendChild(div);
                     });
 
