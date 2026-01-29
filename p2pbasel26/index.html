@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>P2P Networking & QUIC Multipath</title>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <style>
+            :root {
+                --bg: #0a0a0f;
+                --fg: #e8e8e8;
+                --muted: #6b7280;
+                --teal: #4fd1c5;
+                --teal-dark: #2c7a7b;
+                --pink: #d53f8c;
+            }
+
+            .footer {
+                font-size: 0.7rem;
+                color: #999;
+                margin-top: 2rem;
+                position: absolute;
+                bottom: 8rem;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    "IBM Plex Mono", "JetBrains Mono", "Fira Code",
+                    ui-monospace, monospace;
+                background: var(--bg);
+                color: var(--fg);
+                overflow: hidUsing QUIC to traverse NATsden;
+            }
+
+            #slides {
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .slide {
+                display: none;
+                width: 100%;
+                height: 100%;
+                margin-top: 4rem;
+                max-width: 1000px;
+                padding: 2rem 4rem;
+                animation: fadeIn 0.15s ease;
+                position: relative;
+                padding-bottom: 1rem;
+                left: 0;
+            }
+
+            .slide.active {
+                display: block;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0.7;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* Typography */
+            h1 {
+                font-size: 3rem;
+                font-weight: 400;
+                color: var(--teal);
+                margin-bottom: 0.5em;
+                letter-spacing: -0.02em;
+            }
+
+            h2 {
+                font-size: 2rem;
+                font-weight: 600;
+                color: var(--teal);
+                margin-bottom: 1em;
+                letter-spacing: -0.01em;
+            }
+
+            p {
+                font-size: 1.25rem;
+                line-height: 1.6;
+                margin-bottom: 0.8em;
+            }
+
+            strong,
+            a {
+                color: #fff;
+            }
+
+            blockquote {
+                padding-left: 1rem;
+                border-left: 4px solid var(--teal);
+            }
+            blockquote p {
+                color: #aaa;
+            }
+
+            code {
+                background: rgba(79, 209, 197, 0.15);
+                padding: 0.1em 0.4em;
+                border-radius: 3px;
+                font-size: 0.95em;
+            }
+
+            /* Lists */
+            ul,
+            ol {
+                font-size: 1.25rem;
+                line-height: 1.8;
+                padding-left: 1.5em;
+            }
+
+            li {
+                margin-bottom: 0.3em;
+            }
+
+            li::marker {
+                color: var(--teal);
+            }
+
+            /* Tables */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 1.1rem;
+                margin: 1em 0;
+            }
+
+            th {
+                text-align: left;
+                color: var(--teal);
+                border-bottom: 2px solid var(--teal-dark);
+                padding: 0.5em 1em;
+            }
+
+            td {
+                padding: 0.5em 1em;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* Images (SVGs) */
+            img {
+                max-width: 100%;
+                max-height: 60vh;
+                display: block;
+                margin: 1em auto;
+            }
+
+            /* First slide styling (title) */
+            .slide:first-child h1 {
+                font-size: 2.5rem;
+            }
+
+            /* Single word/phrase slides */
+            .slide h1:only-child,
+            .slide h1:first-child:last-of-type:not(:has(~ p):not(:has(~ ul))) {
+                font-size: 4rem;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                width: 80%;
+            }
+
+            /* Progress */
+            #progress {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                height: 3px;
+                background: linear-gradient(90deg, var(--teal), var(--pink));
+                transition: width 0.2s ease;
+            }
+
+            #counter {
+                position: fixed;
+                bottom: 1rem;
+                right: 1.5rem;
+                font-size: 0.8rem;
+                color: var(--muted);
+            }
+
+            /* Help */
+            #help {
+                position: fixed;
+                top: 1rem;
+                right: 1.5rem;
+                font-size: 0.7rem;
+                color: var(--muted);
+                opacity: 0.5;
+            }
+
+            /* Print */
+            @media print {
+                .slide {
+                    display: block !important;
+                    page-break-after: always;
+                    height: 100vh;
+                }
+                #progress,
+                #counter,
+                #help {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="slides"></div>
+        <div id="progress"></div>
+        <div id="counter"></div>
+        <div id="help">← → navigate | f fullscreen</div>
+
+        <script>
+            let currentSlide = 0;
+            let slides = [];
+
+            async function loadSlides() {
+                try {
+                    const response = await fetch("slides.md");
+                    const markdown = await response.text();
+
+                    // Split by --- (slide separator)
+                    const slideContents = markdown
+                        .split(/\n---\n/)
+                        .map((s) => s.trim());
+
+                    const container = document.getElementById("slides");
+
+                    slideContents.forEach((content, i) => {
+                        const div = document.createElement("div");
+                        div.className = "slide" + (i === 0 ? " active" : "");
+                        div.innerHTML =
+                            marked.parse(content) +
+                            `<div class='footer'>${i}/${slideContents.length} | Franz Heinzmann | State of P2P Networking & QUIC-based approaches | P2P Basel 26</div>`;
+                        container.appendChild(div);
+                    });
+
+                    slides = document.querySelectorAll(".slide");
+                    updateProgress();
+                } catch (e) {
+                    document.getElementById("slides").innerHTML = `
+          <div class="slide active">
+            <h1>Error loading slides</h1>
+            <p>Make sure slides.md is in the same directory.</p>
+            <p style="color: var(--muted); font-size: 0.9rem;">${e.message}</p>
+          </div>
+        `;
+                }
+            }
+
+            function showSlide(n) {
+                if (n < 0) n = 0;
+                if (n >= slides.length) n = slides.length - 1;
+
+                slides[currentSlide].classList.remove("active");
+                currentSlide = n;
+                slides[currentSlide].classList.add("active");
+                updateProgress();
+
+                // Update URL hash
+                history.replaceState(null, null, `#${currentSlide + 1}`);
+            }
+
+            function updateProgress() {
+                const pct = ((currentSlide + 1) / slides.length) * 100;
+                document.getElementById("progress").style.width = pct + "%";
+                document.getElementById("counter").textContent =
+                    `${currentSlide + 1} / ${slides.length}`;
+            }
+
+            function next() {
+                showSlide(currentSlide + 1);
+            }
+            function prev() {
+                showSlide(currentSlide - 1);
+            }
+
+            document.addEventListener("keydown", (e) => {
+                switch (e.key) {
+                    case "ArrowRight":
+                    case "ArrowDown":
+                    case " ":
+                    case "PageDown":
+                        next();
+                        e.preventDefault();
+                        break;
+                    case "ArrowLeft":
+                    case "ArrowUp":
+                    case "PageUp":
+                        prev();
+                        e.preventDefault();
+                        break;
+                    case "Home":
+                        showSlide(0);
+                        break;
+                    case "End":
+                        showSlide(slides.length - 1);
+                        break;
+                    case "f":
+                        document.documentElement.requestFullscreen?.();
+                        break;
+                    case "Escape":
+                        document.exitFullscreen?.();
+                        break;
+                }
+            });
+
+            // Click to advance
+            document.addEventListener("click", (e) => {
+                if (e.clientX > window.innerWidth / 2) {
+                    next();
+                } else {
+                    prev();
+                }
+            });
+
+            // Load from hash
+            window.addEventListener("load", () => {
+                loadSlides().then(() => {
+                    const hash = parseInt(location.hash.slice(1));
+                    if (hash > 0 && hash <= slides.length) {
+                        showSlide(hash - 1);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
