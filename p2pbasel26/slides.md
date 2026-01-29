@@ -210,7 +210,7 @@ QUIC extensions can ...
   * Use address mapping to translate from concrete transport-specific address to a virtual IPv6 address
   * QUIC stack sees only virtual IPv6 address
   * Use QUIC multipath to maintain these paths concurrently
-* Transmission may be lossless
+* Transmission may be losy
 * MTU must be at least 1200 bytes
 
 ---
